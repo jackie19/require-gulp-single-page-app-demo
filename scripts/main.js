@@ -26,8 +26,14 @@
         },
         // urlArgs: "bust=123",
         config: {
-            'services': {
+            services: {
                 HTTP_REMOTE: 'http://127.0.0.1:8080'
+            },
+            //允许 text 插件跨域取 html，方便调试
+            text: {
+                useXhr: function () {
+                    return true
+                }
             }
         }
     };

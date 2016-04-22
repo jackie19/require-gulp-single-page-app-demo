@@ -21,17 +21,20 @@ var Q = require('q')
 var RevAll = require('gulp-rev-all')
 
 var paths = {
-    copyCss: './modules/**/*.css',
+    indexHtml: ['src/index.html'],
+    copyCss: ['./modules/**/*.css'],
     scripts: './scripts/**/*.js'
 }
+/*
+ * dist 目录*/
 var DIST = 'dist'
 
+/*
+ * cdn 目录*/
+var CDN = 'cdn'
+
 //脚本检查
-gulp.task('lint', function () {
-    gulp.src(paths.scripts)
-        .pipe(jshint())
-        .pipe(jshint.reporter('default'))
-});
+gulp.task('lint', lint);
 
 /*
  * r.js合并入口
@@ -68,7 +71,11 @@ function mydefault() {
         gulp.start('lint')
     }).on('change', livereload.changed);
 }
-
+function lint() {
+    gulp.src(paths.scripts)
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'))
+}
 function cdn() {
     
     
@@ -89,24 +96,24 @@ function cdn() {
                 indexjs = file.path.split('/').pop()
             
         })
-        .pipe(gulp.dest('cdn'))
+        .pipe(gulp.dest(CDN))
     
     setTimeout(function () {
         
         //生成 index.html
-        gulp.src(['./index.dist.html'])
+        gulp.src(paths.indexHtml)
             .on('data', function (file) {
                 console.log('cdn 2 index-->', file.path)
             })
-            .pipe(replace('dist/js/index.min.js', 'cdn/js/' + indexjs))
-            .pipe(replace('./dist/', './cdn/'))
+            .pipe(replace('<!-- inject:js -->', CDN + '/js/' + indexjs))
+            .pipe(replace('<!-- inject:dist -->', CDN))
             .pipe(rename('index.html'))
             .pipe(gulp.dest('./'))
     }, 100)
     
     setTimeout(function () {
         //模块define名称要手动改
-        rd.eachSync('./cdn/modules/', function (f, s) {
+        rd.eachSync('./' + CDN + '/modules/', function (f, s) {
             var file = fs.statSync(f);
             if (!file.isDirectory() && f.indexOf('.js') > -1) {
                 
@@ -124,8 +131,8 @@ function cdn() {
                 
                 //配合hax，重写模块名
                 gulp.src(f)
-                    .pipe(replace('./dist/modules/' + moduleDir + '/' + _module, './cdn/modules/' + moduleDir + '/' + fileName))
-                    .pipe(gulp.dest('cdn/modules/' + moduleDir))
+                    .pipe(replace('./' + DIST + '/modules/' + moduleDir + '/' + _module, './' + CDN + '/modules/' + moduleDir + '/' + fileName))
+                    .pipe(gulp.dest(CDN + '/modules/' + moduleDir))
             }
         })
     }, 100)
@@ -242,7 +249,7 @@ function rjs() {
         .pipe(gulp.dest(DIST + "/js"))
     
     //生成 dist首页
-    return gulp.src(['src/index.html'])
+    return gulp.src(paths.indexHtml)
         .on('data', function (file) {
             console.log(file.path)
         })
