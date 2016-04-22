@@ -1,0 +1,7 @@
+# robots.txt
+User-agent: baiduspider
+Disallow:
+User-agent: *
+Disallow:
+Disallow: /bower_components/
+Disallow: /debug.html

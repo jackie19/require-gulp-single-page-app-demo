@@ -1,0 +1,14 @@
+{
+  "name": "require app",
+  "version": "1.0.0",
+  "ignore": [],
+  "main": "main.js",
+  "dependencies": {
+    "requirejs": "~2.1.15",
+    "requirejs/text": "~2.0.14",
+    "require-css": "~0.1.8",
+    "underscore": "~1.8.3",
+    "zepto": "~1.1.6",
+    "director": "~1.2.6"
+  }
+}
