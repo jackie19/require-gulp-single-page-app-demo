@@ -44,6 +44,10 @@
         win.common = common
         win.DIST = baseUrl
 
+        //设置默认路由
+        if(!router.getRoute()[0]){
+            router.setRoute('goods')
+        }
 
         //开始监控url变化
         router.init()
